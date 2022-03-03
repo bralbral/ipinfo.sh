@@ -29,7 +29,7 @@ def getasn(ip):
 @app.route('/<ip>/<info>')
 def getspec(ip, info):
   if IPAddress(ip).is_private():
-    return(f"{ip} is a private IP")
+    return(f"{ip} is a private IP\n")
   city_res = getcity(ip)
   asn_res = getasn(ip)
   if city_res and info == "country":
@@ -48,7 +48,7 @@ def getspec(ip, info):
 @app.route('/<ip>/json')
 def getinfojson(ip):
   if IPAddress(ip).is_private():
-    return (f"{ip} is a private IP")
+    return (f"{ip} is a private IP\n")
   city_res = getcity(ip)
   if city_res != 1:
     lat = city_res.location.latitude
@@ -75,7 +75,7 @@ def getinfojson(ip):
 @app.route('/<ip>')
 def getinfo(ip):
   if IPAddress(ip).is_private():
-    return (f"{ip} is a private IP")
+    return (f"{ip} is a private IP\n")
   city_res = getcity(ip)
   if city_res != 1:
     lat = city_res.location.latitude
@@ -92,4 +92,4 @@ def getinfo(ip):
 
 @app.route('/')
 def hello():
-  return ('<p>Hello, World!</p>')
+  return ("Hello, World!\n")
