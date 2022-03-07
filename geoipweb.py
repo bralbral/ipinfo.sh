@@ -6,6 +6,15 @@ from netaddr import *
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
+cli = ["curl", "HTTPie", "httpie-go", "Wget", "fetch libfetch", "Go", "Go-http-client", "ddclient", "Mikrotik", "xh"]
+
+#############################
+### INFORMATIONS QUERRIES ###
+#############################
+
+#
+# Get IP's host
+#
 
 def gethost(ip):
   try:
@@ -14,6 +23,10 @@ def gethost(ip):
     print(f"Hostname resolution failure for {ip}")
     name = "Unknown"
   return (name)
+
+#
+# Location GeoIP database informations querry
+#
 
 def getcity(ip):
   geoipath = "/var/lib/GeoIP"
@@ -25,6 +38,10 @@ def getcity(ip):
     return (0)
   return (city_res)
 
+#
+# ASN GeoIP database informations querry
+#
+
 def getasn(ip):
   geoipath = "/var/lib/GeoIP"
   try:
@@ -35,6 +52,10 @@ def getasn(ip):
     return (0)
   return (asn_res)
 
+#
+# Network informations querry
+#
+
 def getnet(ip):
   try:
     network = requests.get(f"https://internetdb.shodan.io/{ip}").json()
@@ -44,86 +65,11 @@ def getnet(ip):
     network = "No net data about {ip}"
   return (network)
 
-@app.route('/<ip>/<info>')
-def getspec(ip, info):
-  if IPAddress(ip).is_private():
-    return(f"{ip} is a private IP\n")
+#
+# GeoIP informations put in a dict
+#
 
-  infos = {
-    "IP Address": ip
-  }
-  infos.update({"Hostname": gethost(ip)})
-
-  city_res = getcity(ip)
-  if city_res:
-    infos.update({
-        "Country": city_res.country.name,
-        "Country Code": city_res.country.iso_code,
-        "City": city_res.city.name,
-        "Latitude": city_res.location.latitude,
-        "Longitude": city_res.location.longitude
-    })
-
-  asn_res = getasn(ip)
-  if asn_res:
-    infos.update({
-      "ISP": asn_res.autonomous_system_organization,
-      "ASN": f"AS{asn_res.autonomous_system_number}"
-    })
-
-  infos.update(getnet(ip))
-  if len(info) == 3:
-    info = info.upper()
-  elif info == "cc" or info == "countryiso":
-    info = "Country Code"
-  else:
-    info = info.capitalize()
-
-  if not info in infos:
-    return (f"No data about {info} for {ip}")
-
-  if isinstance(infos[info], list):
-    conv = { i : infos[info][i] for i in range(0, len(infos[info]) ) }
-    infos[info] = conv
-
-  return (infos[info])
-
-@app.route('/<ip>/json')
-def getinfojson(ip):
-  if IPAddress(ip).is_private():
-    return (f"{ip} is a private IP\n")
-
-  infos = {
-    "IP Address": ip
-  }
-  infos.update({"Hostname": gethost(ip)})
-
-  city_res = getcity(ip)
-  if city_res:
-    infos.update({
-        "Country": city_res.country.name,
-        "Country Code": city_res.country.iso_code,
-        "City": city_res.city.name,
-        "Latitude": city_res.location.latitude,
-        "Longitude": city_res.location.longitude
-    })
-
-  asn_res = getasn(ip)
-  if asn_res:
-    infos.update({
-      "ISP": asn_res.autonomous_system_organization,
-      "ASN": f"AS{asn_res.autonomous_system_number}"
-    })
-
-  infos.update(getnet(ip))
-
-  return (infos)
-
-@app.route('/<ip>')
-def getinfo(ip):
-  if IPAddress(ip).is_private():
-    return (f"{ip} is a private IP\n")
-
+def getgeo(ip):
   infos = {
     "IP Address": ip
   }
@@ -150,17 +96,81 @@ def getinfo(ip):
   else:
     return (f"No ISP data about {ip}")
 
-  network = getnet(ip)
+  return (infos)
 
+####################
+### FLASK ROUTES ###
+####################
+
+#
+# Specific info path
+#
+
+@app.route('/<ip>/<info>')
+def getspec(ip, info):
+  if IPAddress(ip).is_private():
+    return(f"{ip} is a private IP\n")
+
+  infos = getgeo(ip)
+  infos.update(getnet(ip))
+
+  if len(info) == 3:
+    info = info.upper()
+  elif info == "cc" or info == "countryiso":
+    info = "Country Code"
+  else:
+    info = info.capitalize()
+
+  if not info in infos:
+    return (f"No data about {info} for {ip}")
+
+  if isinstance(infos[info], list):
+    conv = { i : infos[info][i] for i in range(0, len(infos[info]) ) }
+    infos[info] = conv
+
+  return (infos[info] + '\n')
+
+#
+# Json path
+#
+
+@app.route('/<ip>/json')
+def getinfojson(ip):
+  if IPAddress(ip).is_private():
+    return (f"{ip} is a private IP\n")
+
+  infos = getgeo(ip)
+  infos.update(getnet(ip))
+
+  return (infos)
+
+#
+# IP path
+#
+
+@app.route('/<ip>')
+def getinfo(ip):
+  if IPAddress(ip).is_private():
+    return (f"{ip} is a private IP\n")
+
+  infos = getgeo(ip)
+  network = getnet(ip)
   colors = [ '#2488bf', '#d84d3d', '#f39700', '#4caf50' ]
 
-  return (render_template('template.html', ip=ip, infos=infos, network=network, color=random.choice(colors)))
+  if any(x in request.headers.get('User-Agent') for x in cli):
+    infos.update(network)
+    return (infos), 404
+  else:
+    return (render_template('template.html', ip=ip, infos=infos, network=network, color=random.choice(colors)))
+
+#
+# Root path
+#
 
 @app.route('/')
 @app.route('/self')
 def self():
   ip = request.environ.get('HTTP_X_FORWARDED_FOR').split(',')
-  cli = ["curl", "HTTPie", "httpie-go", "Wget", "fetch libfetch", "Go", "Go-http-client", "ddclient", "Mikrotik", "xh"]
   if any(x in request.headers.get('User-Agent') for x in cli):
     return (ip[0] + '\n'), 404
   else:
