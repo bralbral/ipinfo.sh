@@ -1,0 +1,10 @@
+version: '3.3'
+services:
+  geoipweb:
+    build: .
+    container_name: geoipweb
+    ports:
+      - '3005:80'
+    volumes:
+      - '/var/lib/GeoIP:/var/lib/GeoIP'
+    image: geoipweb
