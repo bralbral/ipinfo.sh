@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import geoip2.database
-import socket, requests
+import socket, requests, random
 from netaddr import *
 from flask import Flask, render_template, request
 
@@ -147,7 +147,9 @@ def getinfo(ip):
 
   network = getnet(ip)
 
-  return (render_template('template.html', ip=ip, infos=infos, network=network))
+  colors = [ '#2488bf', '#d84d3d', '#f39700', '#4caf50' ]
+
+  return (render_template('template.html', ip=ip, infos=infos, network=network, color=random.choice(colors)))
 
 @app.route('/')
 @app.route('/self')
