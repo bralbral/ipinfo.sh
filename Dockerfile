@@ -7,8 +7,6 @@ COPY . /app
 RUN pip install --no-cache-dir --upgrade pip
 RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
-COPY ./geoipweb.py /app/geoipweb.py
-
 VOLUME ["/var/lib/GeoIP"]
 
 ENV FLASK_APP=geoipweb
