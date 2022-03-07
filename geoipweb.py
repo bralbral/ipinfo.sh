@@ -160,4 +160,8 @@ def getinfo(ip):
 @app.route('/self')
 def self():
   ip = request.environ.get('HTTP_X_FORWARDED_FOR').split(',')
-  return (getinfo(ip[0]))
+  cli = ["curl", "HTTPie", "httpie-go", "Wget", "fetch libfetch", "Go", "Go-http-client", "ddclient", "Mikrotik", "xh"]
+  if any(x in request.headers.get('User-Agent') for x in cli):
+    return (ip[0] + '\n'), 404
+  else:
+    return (getinfo(ip[0]))
