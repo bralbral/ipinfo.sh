@@ -6,7 +6,10 @@
       /* Customizations. */
       li.list-group-item{overflow:auto;padding-top:6px;padding-bottom:6px;}header.page-header{margin-top:20px;}a.h1{color:inherit;text-decoration:none;}@media(max-width: 750px){div.col-sm-3{font-weight:700;}}
     </style>
-<title>IPinfo</title>
+
+	<title>IPinfo</title>
+
+	<script defer data-domain="rzip.fr" src="https://a.rznet.fr/js/plausible.js"></script>
 </head>
 <body>
 	<header class="page-header container">
@@ -21,30 +24,27 @@
           <h4>Informations about {{ ip }}</h4>
         </div>
         <ul class="list-group">
+		{% for key, value in infos.items() %}
           <li class="list-group-item">
-            <div class="col-sm-3">IP Address</div><div class="col-sm-9">{{ ip }}</div>
+            <div class="col-sm-3">{{ key }}</div><div class="col-sm-9">{{ value }}</div>
           </li>
+		{% endfor %}
+        </ul>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4>Network details of {{ ip }}</h4>
+        </div>
+        <ul class="list-group">
+		{% for key, value in network.items() %}
+			{% if value is iterable and (value is not string and value is not mapping) %}
+				{% for item in value %}
           <li class="list-group-item">
-            <div class="col-sm-3">Country</div><div class="col-sm-9">{{ country }}</div>
+            <div class="col-sm-3">{% if loop.index <= 1 %}{{ key }}{% endif %}</div><div class="col-sm-9">{{ item }}</div>
           </li>
-          <li class="list-group-item">
-            <div class="col-sm-3">Country Code</div><div class="col-sm-9">{{ cc }}</div>
-          </li>
-          <li class="list-group-item">
-            <div class="col-sm-3">City</div><div class="col-sm-9">{{ city }}</div>
-          </li>
-          <li class="list-group-item">
-            <div class="col-sm-3">ISP</div><div class="col-sm-9">{{ isp }}</div>
-          </li>
-          <li class="list-group-item">
-            <div class="col-sm-3">ASN</div><div class="col-sm-9">AS{{ asn }}</div>
-          </li>
-          <li class="list-group-item">
-            <div class="col-sm-3">Latitude</div><div class="col-sm-9">{{ lat }}</div>
-          </li>
-          <li class="list-group-item">
-            <div class="col-sm-3">Longitude</div><div class="col-sm-9">{{ lon }}</div>
-          </li>
+				{% endfor %}
+			{% endif %}
+		{% endfor %}
         </ul>
       </div>
     </main>
