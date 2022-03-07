@@ -72,7 +72,12 @@ def getspec(ip, info):
     })
 
   infos.update(getnet(ip))
-  info = info.capitalize()
+  if len(info) == 3:
+    info = info.upper()
+  elif info == "cc" or info == "countryiso":
+    info = "Country Code"
+  else:
+    info = info.capitalize()
 
   if not info in infos:
     return (f"No data about {info} for {ip}")
