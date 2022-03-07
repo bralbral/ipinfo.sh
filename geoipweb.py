@@ -72,6 +72,7 @@ def getspec(ip, info):
     })
 
   infos.update(getnet(ip))
+  info = info.capitalize()
 
   if not info in infos:
     return (f"No data about {info} for {ip}")
