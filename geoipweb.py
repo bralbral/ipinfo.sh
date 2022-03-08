@@ -24,8 +24,7 @@ def gethost(ip):
   try:
     name = socket.getnameinfo((ip, 0), 0)[0]
   except:
-    print(f"Hostname resolution failure for {ip}")
-    name = "Unknown"
+    name = ip
   return (name)
 
 #
@@ -36,7 +35,6 @@ def getip(ip):
     try:
       ip = socket.gethostbyname(ip)
     except:
-      print(f"Hostname resolution failure for {ip}")
       ip = 0
   return (ip)
 
@@ -69,7 +67,6 @@ def getcity(ip):
     with geoip2.database.Reader(geoipath + '/GeoLite2-City.mmdb') as city_reader:
       city_res = city_reader.city(ip)
   except:
-    print(f"No data about {ip}")
     return (0)
   return (city_res)
 
@@ -82,7 +79,6 @@ def getasn(ip):
     with geoip2.database.Reader(geoipath + '/GeoLite2-ASN.mmdb') as asn_reader:
       asn_res = asn_reader.asn(ip)
   except:
-    print(f"No data about {ip}")
     return (0)
   return (asn_res)
 
@@ -94,7 +90,7 @@ def getnet(ip):
     network = requests.get(f"https://internetdb.shodan.io/{ip}").json()
     network = dict([(k.lower(),v) for k,v in network.items() if len(v)>0])
   except:
-    return(f"No net data about {ip}\n")
+    return(0)
   return (network)
 
 #
@@ -116,7 +112,7 @@ def getgeo(ip):
         "longitude": city_res.location.longitude
     })
   else:
-    return (f"No location data about {ip}\n")
+    return (0)
 
   asn_res = getasn(ip)
   if asn_res:
@@ -125,7 +121,7 @@ def getgeo(ip):
       "asn": f"AS{asn_res.autonomous_system_number}"
     })
   else:
-    return (f"No ISP data about {ip}\n")
+    return (0)
 
   return (infos)
 
@@ -135,8 +131,8 @@ def getgeo(ip):
 def getself(request, info):
   ip = request.headers.get('X-Client-Ip')
   infos = gethead(request, ip)
-  if isinstance(infos := getgeo(ip), str):
-    return (infos)
+  if (infos := getgeo(ip)) == 0:
+    infos = {"Details": f"No location data about {ip}"}
   infos.update(getnet(ip))
 
   info = info.lower()
@@ -169,8 +165,8 @@ def getspec(ip, info):
   if IPAddress(ip).is_private():
     return(f"{ip} is a private IP\n")
 
-  if isinstance(infos := getgeo(ip), str):
-    return (infos)
+  if (infos := getgeo(ip)) == 0:
+    infos = {"Details": f"No location data about {ip}"}
   infos.update(getnet(ip))
 
   info = info.lower()
@@ -203,8 +199,8 @@ def getinfo(ip):
   if IPAddress(ip).is_private():
     return (f"{ip} is a private IP\n")
 
-  if isinstance(infos := getgeo(ip), str):
-    return (infos)
+  if (infos := getgeo(ip)) == 0:
+    infos = {"Details": f"No location data about {ip}"}
   network = getnet(ip)
 
   if any(x in request.headers.get('User-Agent') for x in cli):
@@ -229,8 +225,8 @@ def getinfojson(ip):
   if IPAddress(ip).is_private():
     return (f"{ip} is a private IP\n")
 
-  if isinstance(infos := getgeo(ip), str):
-    return (infos)
+  if (infos := getgeo(ip)) == 0:
+    infos = {"Details": f"No location data about {ip}"}
   infos.update(getnet(ip))
 
   return (infos)
@@ -244,8 +240,8 @@ def self():
   if any(x in request.headers.get('User-Agent') for x in cli):
     return (ip + '\n')
   head = gethead(request, ip)
-  if isinstance(infos := getgeo(ip), str):
-    return (infos)
+  if (infos := getgeo(ip)) == 0:
+    infos = {"Details": f"No location data about {ip}"}
   network = getnet(ip)
 
   return (render_template('template.html',
