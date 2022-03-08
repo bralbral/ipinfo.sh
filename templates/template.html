@@ -4,15 +4,13 @@
 	body{margin:0}footer,header,main,nav{display:block}@media print{*{color:#000!important;text-shadow:none!important;background:0 0!important;-webkit-box-shadow:none!important;box-shadow:none!important}a,a:visited{text-decoration:underline}a[href]:after{content:" (" attr(href) ")"}p{orphans:3;widows:3}}*{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}:after,:before{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}body{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:1em;line-height:1.6;color:#a5a5a5;background-color:#121212}a{text-decoration:none;color:#fff}h1,h4{font-weight:500;line-height:1.1;color:#fff}h1{margin-top:20px;margin-bottom:10px;font-size:2em}h4{margin-top:10px;margin-bottom:10px;font-size:18px}p{margin:0 0 10px}.text-center{text-align:center}ul{margin-top:0;margin-bottom:10px}.container{padding-right:15px;padding-left:15px;margin-right:auto;margin-left:auto}@media (min-width:768px){.container{width:750px}}@media (min-width:992px){.container{width:970px}}@media (min-width:1200px){.container{width:1170px}}.col-sm-3,.col-sm-4,.col-sm-8,.col-sm-9{position:relative;min-height:1px;padding-right:15px;padding-left:15px}@media (min-width:768px){.col-sm-3,.col-sm-4,.col-sm-8,.col-sm-9{float:left}.col-sm-9{width:75%}.col-sm-8{width:66.66666667%}.col-sm-4{width:33.33333333%}.col-sm-3{width:25%}}.list-group{padding-left:0;margin-bottom:20px}.list-group-item{position:relative;display:block;padding:10px 15px;margin-bottom:-1px;background-color:#1e1e1e}.panel{margin-bottom:20px;background-color:#1e1e1e;border-radius:4px;border-top:2px solid {{ color }};box-shadow:0 3px 6px rgba(0,0,0,.16),0 3px 6px rgba(0,0,0,.23);-webkit-box-shadow:0 3px 6px rgba(0,0,0,.16),0 3px 6px rgba(0,0,0,.23)}.panel-heading{padding:10px 15px;border-top:2px solid {{ color }};box-shadow:0 3px 6px rgba(0,0,0,.16),0 3px 6px rgba(0,0,0,.23);-webkit-box-shadow:0 3px 6px rgba(0,0,0,.16),0 3px 6px rgba(0,0,0,.23)}li.list-group-item{overflow:auto;padding-top:6px;padding-bottom:6px}header.page-header{margin-top:20px}@media(max-width:750px){div.col-sm-3{font-weight:700}}
     </style>
 
-	<title>IPinfo</title>
+	<title>{{ hostname }}</title>
 
-	<script defer data-domain="rzip.fr" src="https://a.rznet.fr/js/plausible.js"></script>
+	<script defer data-domain="{{ hostname }}" src="https://a.rznet.fr/js/plausible.js"></script>
 </head>
 <body>
 	<header class="page-header container">
-	<h1><a href="/">
-		IPinfo
-	</a></h1>
+	<h1><a href="/">{{ hostname }}</a></h1>
 	</header>
     <nav class="container"></nav>
     <main class="container">
@@ -101,12 +99,15 @@
           <li class="list-group-item">
             <div class="col-sm-3">curl {{ hostname }}/json</div><div class="col-sm-9">{{ infos }}{{ network }}</div>
           </li>
+          <li class="list-group-item">
+            <div class="col-sm-3">curl {{ hostname }}/{{ infos.hostname }}/ip</div><div class="col-sm-9">{{ infos.ip_address }}</div>
+          </li>
         </ul>
 	{% endif %}
       </div>
     </main>
     <footer class="container text-center">
-      <p>&copy; 2014 - <script>document.write(new Date().getFullYear())</script> <a target="_blank" href="https://git.rznet.fr/razian/geoipweb-py">rzip.fr</a></p>
+      <p>&copy; 2014 - <script>document.write(new Date().getFullYear())</script> <a target="_blank" href="https://git.rznet.fr/razian/geoipweb-py">{{ hostname }}</a></p>
     </footer>
 
 </body>

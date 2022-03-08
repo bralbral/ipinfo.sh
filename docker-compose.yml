@@ -8,3 +8,4 @@ services:
     volumes:
       - '/var/lib/GeoIP:/var/lib/GeoIP'
     image: geoipweb
+    restart: unless-stopped
