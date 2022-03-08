@@ -1,6 +1,6 @@
 # geoipweb
 
-A simple service for getting informations about an IP address. This is the code that powers ipinfo.sh
+A simple service for getting informations about an IP address. This is the code that powers [ipinfo.sh](https://ipinfo.sh)
 
 ## Usage
 
@@ -43,12 +43,13 @@ vulns:
 - CVE-2016-4540
 - CVE-2011-5000
 ```
-More examples on the [website](https://ipinfo.sh).
+
+More examples on the website [ipinfo.sh](https://ipinfo.sh).
 
 ## Install
 
-Require local geoip databases (.mmdb).
-Default path: /var/lib/GeoIP fetched by geoipmysql.
+Require local geoip databases (.mmdb), located by default in /var/lib/GeoIP.
+I recommend using [geoipupdate](https://github.com/maxmind/geoipupdate)).
 
 ```
 git clone https://git.rznet.fr/razian/geoipweb-py.git
@@ -56,3 +57,7 @@ vim docker-compose.yml
 # edit port and geoip volume
 docker-compose up -d
 ```
+
+## Source
+[This repo](https://github.com/tchivert/ipinfo.sh) is just a mirror, but you can open issues here if you want.
+And here is the [source repo](https://git.rznet.fr/razian/geoipweb-py).
