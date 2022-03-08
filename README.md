@@ -1,13 +1,10 @@
 # geoipweb
 
-A simple service for getting informations about an IP address. This is the code that powers rzip.fr
+A simple service for getting informations about an IP address. This is the code that powers ipinfo.sh
 
 ## Usage
 
 ### API
-All the informations are on the [webpage](https://ipinfo.sh)
-
-Examples:
 ```
 $ curl ipinfo.sh
 82.65.180.141
@@ -46,6 +43,7 @@ vulns:
 - CVE-2016-4540
 - CVE-2011-5000
 ```
+More examples on the [website](https://ipinfo.sh).
 
 ## Install
 
