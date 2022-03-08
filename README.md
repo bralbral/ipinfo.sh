@@ -5,7 +5,7 @@ A simple service for getting informations about an IP address. This is the code 
 ## Usage
 
 ### API
-```
+```bash
 $ curl ipinfo.sh
 82.65.180.141
 
