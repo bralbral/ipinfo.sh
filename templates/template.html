@@ -81,7 +81,10 @@
             <div class="col-sm-3">curl {{ hostname }}/all</div><div class="col-sm-9">{{ head|to_yaml|safe }}{{ infos|to_yaml|safe }}{{ network|to_yaml|safe }}</div>
           </li>
         </ul>
-	{% else %}
+        <div class="panel-heading">
+          <h4>API examples on IPs and hosts</h4>
+        </div>
+	{% endif %}
         <ul class="list-group">
           <li class="list-group-item">
             <div class="col-sm-3">curl {{ hostname }}/{{ infos.ip_address }}</div><div class="col-sm-9">{{ infos|to_yaml|safe }}{{ network|to_yaml|safe }}</div>
@@ -103,7 +106,6 @@
             <div class="col-sm-3">curl {{ hostname }}/{{ infos.hostname }}/ip</div><div class="col-sm-9">{{ infos.ip_address }}</div>
           </li>
         </ul>
-	{% endif %}
       </div>
     </main>
     <footer class="container text-center">
