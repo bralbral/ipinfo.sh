@@ -6,6 +6,7 @@ A simple service for getting informations about an IP address. This is the code 
 
 ### API
 All the informations are on the [webpage](https://ipinfo.sh)
+
 Examples:
 ```
 $ curl ipinfo.sh
