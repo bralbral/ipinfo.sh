@@ -4,48 +4,46 @@ A simple service for getting informations about an IP address. This is the code 
 
 ## Usage
 
-### Webpage
-https://rzip.fr/1.1.1.1
-
 ### API
-
+All the informations are on the [webpage](https://ipinfo.sh)
+Examples:
 ```
-$ curl rzip.fr/1.1.1.1/json
-{"ASN":"AS13335","City":null,"Country":"Australia","Country Code":"AU","Hostname":"one.one.one.one","Hostnames":["one.one.one.one"],"IP Address":"1.1.1.1","ISP":"CLOUDFLARENET","Ip":"1.1.1.1","Latitude":-33.494,"Longitude":143.2104,"Ports":[53,80,443]}
+$ curl ipinfo.sh
+82.65.180.141
 
-$ curl rzip.fr/1.1.1.1/country
+$ curl ipinfo.sh/1.1.1.1/country
 Australia
 
-$ curl rzip.fr/1.1.1.1/ISP
-CLOUDFLARENET
+$ curl ipinfo.sh/one.one.one.one/ip
+1.1.1.1
 
-$ curl rzip.fr/1.1.1.1/ports
-{"0":53,"1":80,"2":443}
-```
-
-Prettier json
-```
-curl -s rzip.fr/1.1.1.1/json | jq .
-{
-  "ASN": "AS13335",
-  "City": null,
-  "Country": "Australia",
-  "Country Code": "AU",
-  "Hostname": "one.one.one.one",
-  "Hostnames": [
-    "one.one.one.one"
-  ],
-  "IP Address": "1.1.1.1",
-  "ISP": "CLOUDFLARENET",
-  "Ip": "1.1.1.1",
-  "Latitude": -33.494,
-  "Longitude": 143.2104,
-  "Ports": [
-    53,
-    80,
-    443
-  ]
-}
+$ curl ipinfo.sh/153.122.112.234
+asn: AS131921
+city: null
+country: Japan
+country_code: JP
+cpes:
+- cpe:/a:php:php:7.0.2
+- cpe:/a:openbsd:openssh:5.3
+- cpe:/a:jquery:jquery
+- cpe:/a:apache:http_server
+hostname: sub0000542438.hmk-temp.com
+hostnames:
+- sub0000542438.hmk-temp.com
+ip: 153.122.112.234
+ip_address: 153.122.112.234
+isp: GMO GlobalSign Holdings K.K.
+latitude: 35.6897
+longitude: 139.6895
+ports:
+- 22
+- 80
+- 443
+vulns:
+- CVE-2013-7456
+- CVE-2016-7128
+- CVE-2016-4540
+- CVE-2011-5000
 ```
 
 ## Install
