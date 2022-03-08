@@ -16,33 +16,97 @@
 	</header>
     <nav class="container"></nav>
     <main class="container">
+	{% if head is defined %}
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h4>Informations about {{ ip }}</h4>
+          <h4>Your Connection</h4>
+        </div>
+        <ul class="list-group">
+		{% for key, value in head.items() %}
+          <li class="list-group-item">
+            <div class="col-sm-3">{{ key|replace("_", " ")|title() }}</div><div class="col-sm-9">{{ value }}</div>
+          </li>
+		{% endfor %}
+        </ul>
+      </div>
+	{% endif %}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4>Geolocation</h4>
         </div>
         <ul class="list-group">
 		{% for key, value in infos.items() %}
           <li class="list-group-item">
-            <div class="col-sm-3">{{ key }}</div><div class="col-sm-9">{{ value }}</div>
+            <div class="col-sm-3">{{ key|replace("_", " ")|title() }}</div><div class="col-sm-9">{{ value }}</div>
           </li>
 		{% endfor %}
         </ul>
       </div>
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h4>Network details of {{ ip }}</h4>
+          <h4>Network details</h4>
         </div>
         <ul class="list-group">
 		{% for key, value in network.items() %}
-			{% if value is iterable and (value is not string and value is not mapping) %}
-				{% for item in value %}
+		{% if value is iterable and (value is not string and value is not mapping) %}
+		{% for item in value %}
           <li class="list-group-item">
-            <div class="col-sm-3">{% if loop.index <= 1 %}{{ key }}{% endif %}</div><div class="col-sm-9">{{ item }}</div>
+            <div class="col-sm-3">{% if loop.index <= 1 %}{{ key|replace("_", " ")|title() }}{% endif %}</div><div class="col-sm-9">{{ item }}</div>
           </li>
-				{% endfor %}
-			{% endif %}
+		{% endfor %}
+		{% else %}
+          <li class="list-group-item">
+            <div class="col-sm-3">{{ key|replace("_", " ")|title() }}</div><div class="col-sm-9">{{ value }}</div>
+          </li>
+		{% endif %}
 		{% endfor %}
         </ul>
       </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4>API usage exemples</h4>
+        </div>
+	{% if head is defined %}
+        <ul class="list-group">
+          <li class="list-group-item">
+            <div class="col-sm-3">curl {{ hostname }}</div><div class="col-sm-9">{{ ip }}</div>
+          </li>
+		{% for key, value in head.items() %}
+          <li class="list-group-item">
+            <div class="col-sm-3">curl {{ hostname }}/{{ key }}</div><div class="col-sm-9">{{ value }}</div>
+          </li>
+		{% endfor %}
+          <li class="list-group-item">
+            <div class="col-sm-3">curl {{ hostname }}/json</div><div class="col-sm-9">{{ head }}{{ infos }}{{ network }}</div>
+          </li>
+          <li class="list-group-item">
+            <div class="col-sm-3">curl {{ hostname }}/all</div><div class="col-sm-9">{{ head|to_yaml|safe }}{{ infos|to_yaml|safe }}{{ network|to_yaml|safe }}</div>
+          </li>
+        </ul>
+	{% else %}
+        <ul class="list-group">
+          <li class="list-group-item">
+            <div class="col-sm-3">curl {{ hostname }}/{{ infos.ip_address }}</div><div class="col-sm-9">{{ infos|to_yaml|safe }}{{ network|to_yaml|safe }}</div>
+          </li>
+		{% for key, value in infos.items() %}
+          <li class="list-group-item">
+            <div class="col-sm-3">curl {{ hostname }}/{{ infos.ip_address }}/{{ key }}</div><div class="col-sm-9">{{ value }}</div>
+          </li>
+		{% endfor %}
+		{% for key, value in network.items() %}
+          <li class="list-group-item">
+            <div class="col-sm-3">curl {{ hostname }}/{{ infos.ip_address }}/{{ key }}</div><div class="col-sm-9">{{ value }}</div>
+          </li>
+		{% endfor %}
+          <li class="list-group-item">
+            <div class="col-sm-3">curl {{ hostname }}/json</div><div class="col-sm-9">{{ infos }}{{ network }}</div>
+          </li>
+        </ul>
+	{% endif %}
+      </div>
     </main>
+    <footer class="container text-center">
+      <p>&copy; 2014 - <script>document.write(new Date().getFullYear())</script> <a target="_blank" href="https://git.rznet.fr/razian/geoipweb-py">rzip.fr</a></p>
+    </footer>
+
 </body>
