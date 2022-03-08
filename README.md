@@ -1,4 +1,4 @@
-# geoipweb
+# ipinfo.sh
 
 A simple service for getting informations about an IP address. This is the code that powers [ipinfo.sh](https://ipinfo.sh)
 
