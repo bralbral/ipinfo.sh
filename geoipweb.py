@@ -251,3 +251,10 @@ def self():
           infos=infos,
           network=network,
           color=random.choice(colors)))
+
+#
+# Favicon
+#
+@app.route('/favicon.ico')
+def favicon():
+  return ("Not found"), 404
