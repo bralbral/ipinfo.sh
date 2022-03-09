@@ -11,5 +11,6 @@ VOLUME ["/var/lib/GeoIP"]
 
 COPY . /app
 
+EXPOSE 8080
 ENV FLASK_APP=geoipweb
-CMD [ "python", "-m" , "flask", "run", "--host=0.0.0.0", "--port=80" ]
+CMD [ "python", "-m" , "flask", "run", "--host=0.0.0.0", "--port=8080" ]

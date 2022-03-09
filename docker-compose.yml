@@ -4,7 +4,7 @@ services:
     build: .
     container_name: geoipweb
     ports:
-      - '3005:80'
+      - '3005:8080'
     volumes:
       - '/var/lib/GeoIP:/var/lib/GeoIP'
     image: geoipweb
