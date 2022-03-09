@@ -142,7 +142,7 @@ python -m flask run --host=0.0.0.0 --port=8080
 
  - Tom Chivert [@razian](https://rznet.fr/)
 
-The github repo is a mirror of [this repo](https://git.rznet.fr/razian/geoipweb-py).
+The [github repo](https://github.com/tchivert/ipinfo.sh) is a mirror of [this repo](https://git.rznet.fr/razian/geoipweb-py).
 
 ## Acknowledgments
 
