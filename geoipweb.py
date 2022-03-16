@@ -7,6 +7,7 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 cli = ["curl", "HTTPie", "httpie-go", "Wget", "fetch libfetch", "Go", "Go-http-client", "ddclient", "Mikrotik", "xh"]
+netinfos = ["ip", "ports", "cpes", "hostnames", "tags", "vulns"]
 colors = [ '#2488bf', '#d84d3d', '#f39700', '#4caf50' ]
 
 def to_yaml(value):
@@ -130,12 +131,12 @@ def getgeo(ip):
 #
 def getself(request, info):
   ip = request.headers.get('X-Client-Ip')
+  info = info.lower()
   infos = gethead(request, ip)
   if (infos := getgeo(ip)) == 0:
     infos = {"Details": f"No location data about {ip}"}
-  infos.update(getnet(ip))
-
-  info = info.lower()
+  if info in netinfos:
+    infos.update(getnet(ip))
 
   if info == "all":
     return (to_yaml(infos))
@@ -165,11 +166,11 @@ def getspec(ip, info):
   if IPAddress(ip).is_private():
     return(f"{ip} is a private IP\n")
 
+  info = info.lower()
   if (infos := getgeo(ip)) == 0:
     infos = {"Details": f"No location data about {ip}"}
-  infos.update(getnet(ip))
-
-  info = info.lower()
+  if info in netinfos:
+    infos.update(getnet(ip))
 
   if info == "all":
     return (to_yaml(infos))
@@ -236,9 +237,10 @@ def getinfojson(ip):
 #
 @app.route('/')
 def self():
-  ip = request.headers.get('X-Client-Ip')
+  if (ip := request.headers.get('X-Client-Ip')) == None:
+    ip = request.remote_addr
   if any(x in request.headers.get('User-Agent') for x in cli):
-    return (ip + '\n')
+    return (str(ip) + '\n')
   head = gethead(request, ip)
   if (infos := getgeo(ip)) == 0:
     infos = {"Details": f"No location data about {ip}"}
