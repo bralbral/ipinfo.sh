@@ -90,9 +90,24 @@ def getnet(ip):
   try:
     network = requests.get(f"https://internetdb.shodan.io/{ip}").json()
     network = dict([(k.lower(),v) for k,v in network.items() if len(v)>0])
+    if "detail" in network:
+      del network["detail"]
+    network.update({"threat_level": getthreat(ip)})
   except:
     return(0)
   return (network)
+
+#
+# Threat informations querry
+#
+def getthreat(ip):
+  try:
+    threat = requests.get(f"https://threat.ipinfo.sh/{ip}")
+  except:
+    return("Unknown")
+  if threat.status_code != 200:
+    return("Unknown")
+  return (threat.text)
 
 #
 # GeoIP informations put in a dict
@@ -134,7 +149,7 @@ def getself(request, info):
   info = info.lower()
   infos = gethead(request, ip)
   if (infos := getgeo(ip)) == 0:
-    infos = {"Details": f"No location data about {ip}"}
+    infos = {"Error": f"No location data about {ip}"}
   if info in netinfos:
     infos.update(getnet(ip))
 
@@ -168,7 +183,7 @@ def getspec(ip, info):
 
   info = info.lower()
   if (infos := getgeo(ip)) == 0:
-    infos = {"Details": f"No location data about {ip}"}
+    infos = {"Error": f"No location data about {ip}"}
   if info in netinfos:
     infos.update(getnet(ip))
 
@@ -201,7 +216,7 @@ def getinfo(ip):
     return (f"{ip} is a private IP\n")
 
   if (infos := getgeo(ip)) == 0:
-    infos = {"Details": f"No location data about {ip}"}
+    infos = {"Error": f"No location data about {ip}"}
   network = getnet(ip)
 
   if any(x in request.headers.get('User-Agent') for x in cli):
@@ -227,7 +242,7 @@ def getinfojson(ip):
     return (f"{ip} is a private IP\n")
 
   if (infos := getgeo(ip)) == 0:
-    infos = {"Details": f"No location data about {ip}"}
+    infos = {"Error": f"No location data about {ip}"}
   infos.update(getnet(ip))
 
   return (infos)
@@ -243,7 +258,7 @@ def self():
     return (str(ip) + '\n')
   head = gethead(request, ip)
   if (infos := getgeo(ip)) == 0:
-    infos = {"Details": f"No location data about {ip}"}
+    infos = {"Error": f"No location data about {ip}"}
   network = getnet(ip)
 
   return (render_template('template.html',
