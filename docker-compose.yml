@@ -1,11 +1,10 @@
 version: '3.3'
 services:
   geoipweb:
-    build: .
+    image: razian/geoipweb
     container_name: geoipweb
     ports:
       - '3005:8080'
     volumes:
       - '/var/lib/GeoIP:/var/lib/GeoIP'
-    image: geoipweb
     restart: unless-stopped
