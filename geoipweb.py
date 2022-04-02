@@ -43,7 +43,10 @@ def getip(ip):
 # Get request headers
 #
 def gethead(request, ip):
-  ip = request.headers.get('X-Client-Ip')
+  if (ip := request.headers.getlist('X-Forwarded-For')[0]) == None:
+    ip = request.remote_addr
+  if (ip := request.headers.get('CF-Connecting-IP')) == None:
+    ip = request.remote_addr
   head = {
     "ip_address": ip,
     "remote_host": gethost(ip),
@@ -252,7 +255,9 @@ def getinfojson(ip):
 #
 @app.route('/')
 def self():
-  if (ip := request.headers.get('X-Client-Ip')) == None:
+  if (ip := request.headers.getlist('X-Forwarded-For')[0]) == None:
+    ip = request.remote_addr
+  if (ip := request.headers.get('CF-Connecting-IP')) == None:
     ip = request.remote_addr
   if any(x in request.headers.get('User-Agent') for x in cli):
     return (str(ip) + '\n')
