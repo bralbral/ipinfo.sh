@@ -43,10 +43,16 @@ def getip(ip):
 # Get request headers
 #
 def gethead(request, ip):
-  if (ip := request.headers.getlist('X-Forwarded-For')[0]) == None:
+  if request.headers.getlist('X-Forwarded-For'):
+    ip = request.headers.getlist('X-Forwarded-For')[0]
+  elif request.headers.get('CF-Connecting-IP'):
+    ip = request.headers.get('CF-Connecting-IP')
+  else:
     ip = request.remote_addr
-  if (ip := request.headers.get('CF-Connecting-IP')) == None:
-    ip = request.remote_addr
+  if request.headers.get("X-Forwarded-For"):
+    forwarded = request.headers.get("X-Forwarded-For").split(',')[0]
+  else:
+    forwarded = "None, there is no forwarded IP"
   head = {
     "ip_address": ip,
     "remote_host": gethost(ip),
@@ -57,7 +63,7 @@ def gethead(request, ip):
     "encoding": request.headers.get("Accept-Encoding"),
     "method": request.method,
     "cache-control": request.headers.get("Cache-Control"),
-    "x-forwarded-for": request.headers.get("X-Forwarded-For").split(',')[0],
+    "x-forwarded-for": forwarded.split(',')[0],
     "x-forwarded-proto": request.headers.get("X-Forwarded-Proto")
   }
   return (head)
@@ -255,9 +261,11 @@ def getinfojson(ip):
 #
 @app.route('/')
 def self():
-  if (ip := request.headers.getlist('X-Forwarded-For')[0]) == None:
-    ip = request.remote_addr
-  if (ip := request.headers.get('CF-Connecting-IP')) == None:
+  if request.headers.getlist('X-Forwarded-For'):
+    ip = request.headers.getlist('X-Forwarded-For')[0]
+  elif request.headers.get('CF-Connecting-IP'):
+    ip = request.headers.get('CF-Connecting-IP')
+  else:
     ip = request.remote_addr
   if any(x in request.headers.get('User-Agent') for x in cli):
     return (str(ip) + '\n')
