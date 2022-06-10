@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
 import geoip2.database
-import socket, requests, random, yaml
+import socket, requests, random, yaml, os
+from os import environ
 from netaddr import *
 from flask import Flask, render_template, request
 
@@ -11,8 +12,13 @@ netinfos = ["ip", "ports", "cpes", "hostnames", "tags", "vulns"]
 colors = [ '#2488bf', '#d84d3d', '#f39700', '#4caf50' ]
 
 def to_yaml(value):
-    return (yaml.dump(value, default_flow_style=False))
+  return (yaml.dump(value, default_flow_style=False))
 app.jinja_env.filters['to_yaml'] = to_yaml
+
+def get_name(host):
+  if environ.get('GEOIPNAME') is not None:
+    return (environ.get('GEOIPNAME'))
+  return (host)
 
 #############################
 ### INFORMATIONS QUERRIES ###
@@ -232,8 +238,10 @@ def getinfo(ip):
     infos.update(network)
     return (to_yaml(infos))
   else:
+    title = get_name(request.headers.get("host"))
     return (render_template('template.html',
             hostname=request.headers.get("host"),
+            title=title,
             ip=request.headers.get('X-Client-Ip'),
             infos=infos,
             network=network,
@@ -273,9 +281,10 @@ def self():
   if (infos := getgeo(ip)) == 0:
     infos = {"Error": f"No location data about {ip}"}
   network = getnet(ip)
-
+  title = get_name(request.headers.get("host"))
   return (render_template('template.html',
           hostname=request.headers.get("host"),
+          title=title,
           ip=ip,
           head=head,
           infos=infos,
