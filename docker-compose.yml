@@ -7,4 +7,6 @@ services:
       - '3005:8080'
     volumes:
       - '/var/lib/GeoIP:/var/lib/GeoIP'
+    environment:
+      - GEOIPNAME=ipinfo.sh
     restart: unless-stopped

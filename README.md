@@ -127,6 +127,7 @@ git clone https://git.rznet.fr/razian/geoipweb-py.git
 cd geoipweb-py
 vim docker-compose.yml
 # edit port and geoip volume
+# you can also change the site title with GEOIPNAME env var
 docker-compose up -d
 ```
 
