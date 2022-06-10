@@ -107,22 +107,9 @@ def getnet(ip):
     network = dict([(k.lower(),v) for k,v in network.items() if len(v)>0])
     if "detail" in network:
       del network["detail"]
-    network.update({"threat_level": getthreat(ip)})
   except:
     return(0)
   return (network)
-
-#
-# Threat informations querry
-#
-def getthreat(ip):
-  try:
-    threat = requests.get(f"https://threat.ipinfo.sh/{ip}")
-  except:
-    return("Unknown")
-  if threat.status_code != 200:
-    return("Unknown")
-  return (threat.text)
 
 #
 # GeoIP informations put in a dict
