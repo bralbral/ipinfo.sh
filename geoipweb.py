@@ -46,15 +46,22 @@ def getip(ip):
   return (ip)
 
 #
+# Get client IP
+#
+def getclientip(request):
+  if request.headers.getlist('X-Forwarded-For'):
+    return(request.headers.getlist('X-Forwarded-For')[0])
+  elif request.headers.get('CF-Connecting-IP'):
+    return(request.headers.get('CF-Connecting-IP'))
+  else:
+    return(request.remote_addr)
+
+
+#
 # Get request headers
 #
 def gethead(request, ip):
-  if request.headers.getlist('X-Forwarded-For'):
-    ip = request.headers.getlist('X-Forwarded-For')[0]
-  elif request.headers.get('CF-Connecting-IP'):
-    ip = request.headers.get('CF-Connecting-IP')
-  else:
-    ip = request.remote_addr
+  ip = getclientip(request)
   if request.headers.get("X-Forwarded-For"):
     forwarded = request.headers.get("X-Forwarded-For").split(',')[0]
   else:
@@ -147,7 +154,7 @@ def getgeo(ip):
 # Return a single info
 #
 def getself(request, info):
-  ip = request.headers.get('X-Client-Ip')
+  ip = getclientip(request)
   info = info.lower()
   infos = gethead(request, ip)
   if (infos := getgeo(ip)) == 0:
@@ -256,12 +263,7 @@ def getinfojson(ip):
 #
 @app.route('/')
 def self():
-  if request.headers.getlist('X-Forwarded-For'):
-    ip = request.headers.getlist('X-Forwarded-For')[0]
-  elif request.headers.get('CF-Connecting-IP'):
-    ip = request.headers.get('CF-Connecting-IP')
-  else:
-    ip = request.remote_addr
+  ip = getclientip(request)
   if any(x in request.headers.get('User-Agent') for x in cli):
     return (str(ip) + '\n')
   head = gethead(request, ip)
